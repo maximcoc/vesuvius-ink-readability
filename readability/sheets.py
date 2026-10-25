@@ -58,11 +58,13 @@ def track(R, guess):
     return dict(rise=zi, fall=ze, valid=valid, mask=mask, contrast=p80 - p20, T=T, Vs=V)
 
 
-def check(path, surface=None, chunk=2000, map_out=None, min_papyrus=0.5):
+def check(path, surface=None, chunk=2000, map_out=None, min_papyrus=0.5, mask_out=None):
     """Sheet statistics of a render (zarr group with array 0). surface: mesh layer (default: middle layer).
     map_out: optional PNG, a quarter-size map (green: valid sheet centred within +-2 layers of the mesh; yellow: valid
     sheet centred further away, normal when the mesh follows a sheet face; red: papyrus without a valid sheet; grey: not
-    checked; black: no data)."""
+    checked; black: no data). mask_out: optional PNG at full segment resolution with the class per pixel
+    (0 no data, 1 valid sheet centred within +-2 layers, 2 valid sheet further away, 3 papyrus without a valid sheet,
+    4 not checked), aligned to the render's canvas so other tools can read it."""
     A = zarr.open_group(path, mode='r')['0']
     L = A.shape[0]
     if surface is None:
@@ -73,7 +75,7 @@ def check(path, surface=None, chunk=2000, map_out=None, min_papyrus=0.5):
               '(render a thicker band, e.g. python -m readability.tifxyz)')
     npap = nval = nnear = 0
     contrast = []
-    qa = np.zeros(A.shape[1:], np.uint8) if map_out else None
+    qa = np.zeros(A.shape[1:], np.uint8) if (map_out or mask_out) else None
     for x0 in range(0, A.shape[2], chunk):
         R = np.asarray(A[k0:k1, :, x0:x0 + chunk])
         if qa is not None:
@@ -95,8 +97,11 @@ def check(path, surface=None, chunk=2000, map_out=None, min_papyrus=0.5):
     c = np.concatenate(contrast) if contrast else np.array([np.nan])
     if qa is not None:
         from PIL import Image
-        pal = np.array([[0, 0, 0], [0, 170, 0], [230, 190, 0], [200, 30, 30], [110, 110, 110]], np.uint8)
-        Image.fromarray(pal[qa[::4, ::4]]).save(map_out)
+        if map_out:
+            pal = np.array([[0, 0, 0], [0, 170, 0], [230, 190, 0], [200, 30, 30], [110, 110, 110]], np.uint8)
+            Image.fromarray(pal[qa[::4, ::4]]).save(map_out)
+        if mask_out:
+            Image.fromarray(qa).save(mask_out)
     return dict(valid=nval / max(npap, 1), near=nnear / max(nval, 1), contrast_median=float(np.median(c)),
                 contrast_share_25=float(np.mean(c >= 25)), papyrus_checked=npap)
 
@@ -106,10 +111,12 @@ def main():
     ap.add_argument('renders', nargs='+')
     ap.add_argument('--surface', type=int, default=None, help='mesh layer (default: the middle layer; 33 in our renders)')
     ap.add_argument('--map', action='store_true', help='also write RENDER.sheets.png, a quarter-size map')
+    ap.add_argument('--mask', action='store_true', help='also write RENDER.sheets_mask.png: the class per pixel at full resolution (0-4), aligned to the render')
     ap.add_argument('--min-papyrus', type=float, default=0.5, help='skip 2000 px strips with less papyrus than this')
     a = ap.parse_args()
     for p in a.renders:
-        r = check(p, a.surface, map_out=p.rstrip('/') + '.sheets.png' if a.map else None, min_papyrus=a.min_papyrus)
+        r = check(p, a.surface, map_out=p.rstrip('/') + '.sheets.png' if a.map else None, min_papyrus=a.min_papyrus,
+                  mask_out=p.rstrip('/') + '.sheets_mask.png' if a.mask else None)
         print(f'{p}	valid {r["valid"]:.1%}	near {r["near"]:.1%}	depth contrast median {r["contrast_median"]:.1f} '
               f'(share >= 25: {r["contrast_share_25"]:.0%})	papyrus checked {r["papyrus_checked"]:,} px')
 

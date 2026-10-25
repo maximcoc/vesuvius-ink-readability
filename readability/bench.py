@@ -9,6 +9,7 @@ Spearman correlation with AUC.
 
 Usage:  python -m readability.bench CONFIG.json OUT.json
 CONFIG: {"checkpoint": "reader-v3.pth", "window_start": 2, "alphas": [1.0, 0.85, 0.7], "alpha_ref": 0.85,
+         "background_surface": 33,                      # mesh layer of the background renders (20 for a 41-layer tifxyz band)
          "sources": ["crops/a.npz", ...],            # npz with R (Ls, H, W) uint8 (reading side = reversed order),
                                                        # lab and cert (H, W) bool
          "scrolls": {"800": ["renders/e050.zarr", ...], ...}, "reference": "800", "bootstrap": 1000}
@@ -40,6 +41,7 @@ def run(cfg):
     import zarr
     model = load_model(cfg['checkpoint'])
     S, alphas, aref = cfg['window_start'], [float(a) for a in cfg['alphas']], float(cfg.get('alpha_ref', 0.85))
+    SB = int(cfg.get('background_surface', 33))                 # mesh layer of the background renders
     srcs = []
     for p in cfg['sources']:
         z = np.load(p)
@@ -52,11 +54,11 @@ def run(cfg):
         for bi, rp in enumerate(renders):
             B = np.asarray(zarr.open_group(rp, mode='r')['0'][:])
             for ci, (R, lab, cert) in enumerate(srcs):
-                r = make(R, lab, cert, B, alphas)
+                r = make(R, lab, cert, B, alphas, bg_surface=SB)
                 if r is None:
                     continue
                 out, J, info, Bw, s = r
-                cl.append(clutter_index(Bw, surface=33 + s, mask=J))
+                cl.append(clutter_index(Bw, surface=SB + s, mask=J))
                 pos, neg = lab & cert & J, ~lab & cert & J
                 comp, _ = ndimage.label(lab)
                 lid = ci * 100000 + comp[pos]

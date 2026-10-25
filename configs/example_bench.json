@@ -1,6 +1,7 @@
 {
   "checkpoint": "checkpoints/reader-v3.pth",
   "window_start": 4,
+  "background_surface": 33,
   "alphas": [1.0, 0.85, 0.7],
   "alpha_ref": 0.85,
   "sources": ["crops/0841_c0.npz", "crops/0841_w00.npz", "crops/0841_c2.npz"],

@@ -5,11 +5,11 @@ Draft of 25 October 2026. Code and results: https://github.com/maximcoc/vesuvius
 This report gives three checks to run on a 9 µm scan before searching it, and the measurements that test them on the eligible scrolls:
 - a **sheet check**, which says whether a segment stays on one papyrus sheet and now runs directly on the organisers' tifxyz segments;
 - a **clutter index**, which measures the fine-scale texture of a render without labels;
-- a **readability bench**, which measures how faint real ink can be before an ink model loses it, on any background and with any ink_9um-format model.
+- a **readability bench**, which measures how faint real ink can be before an ink model loses it, on any background render whose mesh layer is known (our 66-layer renders or a `readability.tifxyz` band) and with any ink_9um-format model.
 
 The findings:
 - **The detection limit, for the models tested.** Reader v2 and Reader V3 reach AUC 0.65 at 74-76% of PHerc. 1447's ink contrast. No change we tried to the models or their inputs gained 0.03 AUC, though several intervals still include that bar.
-- **Readability follows the texture of the render, for 1447-type ink.** With PHerc. 1447 letters, injected-ink readability follows the fine-scale texture of the render at periods of about 55-120 µm. The Spearman correlation is −0.75 to −0.97 in every variant we ran, including within one scan campaign. With PHerc. 0841 letters the relation is weaker and depends on the crop window (−0.35 to −0.80). Total grey-level variance does not predict readability.
+- **Readability follows the texture of the render, for 1447-type ink.** With PHerc. 1447 letters, injected-ink readability follows the fine-scale texture of the render at periods of about 55-120 µm. The Spearman correlation is −0.75 to −0.97 in every variant we ran on native renders, including within one scan campaign; on the voxel-resampled renders of round 26 the index does not rank (−0.18 and −0.12). With PHerc. 0841 letters the relation is weaker and depends on the crop window (−0.35 to −0.85). Total grey-level variance does not predict readability.
 - **The campaign comparison is not settled.** Whether the July 2025 9.362 µm / 113 keV campaign as a whole reads worse remains open.
   - With matched renders the gap is +0.01 to +0.05 AUC, depending on the letter source and the crop window.
   - Part of the gap we first measured came from our own renders.
@@ -22,7 +22,7 @@ Private draft for review; it contains no labels and no revealed text.
 
 | tool | question it answers | input | checked against |
 | --- | --- | --- | --- |
-| `readability.tifxyz` | renders a 41-layer band around a segment, straight from the scan | a tifxyz segment and the scan volume (local zarr or the open-data URL; only the chunks the band touches are fetched) | the official surface volumes of three PHerc. 0841 and six PHerc. 800 segments: per-layer r 0.964-0.976 |
+| `readability.tifxyz` | renders a 41-layer band around a segment, straight from the scan | a tifxyz segment and the scan volume (local zarr or the open-data URL; only the chunks the band touches are fetched) | the official surface volumes of three PHerc. 0841 and six PHerc. 800 segments: mean r over layers 0.964-0.976 per segment (per-layer range 0.94-0.99) |
 | `readability.sheets` | does the surface sit on one distinct sheet, and where not? | any surface-volume render of about 40 layers or more | reproduces round 22: 0268 14%, 800 63-67% |
 | `readability.clutter` | how much fine-scale texture is in this render? | any surface-volume render | injected-ink readability in rounds 12-27 (below) |
 | `readability.bench` | how faint can real ink be before this model misses it on this papyrus? | letter crops built locally from labelled data, background renders, an ink_9um-format checkpoint | reproduces rounds 18, 20 and 25 exactly (PHerc. 1203: 0.689 and 0.721) |
@@ -132,13 +132,13 @@ Public work in September and October 2026 had already searched most of these scr
 1. A readability bench with real letters from two scans (1447 at 116 keV, 0841 at 113 keV), read by two models on 12 eligible scrolls.
 2. A label-free texture index validated against that bench for 1447-type ink, within one campaign and with matched renders. The band where readability information lives: periods of 55-120 µm. Total variance and gp13's index do not predict readability.
 3. A measured voxel-size effect: making a background 8% coarser costs these models up to 0.06 AUC.
-4. The sheet check, now runnable on the organisers' tifxyz segments. As far as we found, it is the only public check of a segment against the sheet structure in the CT; the existing checks look at mesh geometry and metadata.
+4. The sheet check, now runnable on the organisers' tifxyz segments. As far as we found, it is the only public check that maps, per pixel on a given segment, whether the segment sits on a distinct sheet in the CT; the existing checks look at mesh geometry and metadata, gp13's sheet-separability axis is a per-scroll scan statistic, and Herculaneum Scroll Tools audits volume-level surface predictions.
 5. A noise-versus-clutter budget at stroke scale.
-6. Reader V3 halves false lights at the same sensitivity.
+6. A measurement, not a tool: Reader V3 halves false lights at the same sensitivity.
 7. An ideal-linear-observer benchmark (Hotelling on 3D patches, cross-fitted by winding) on the same bench: at chance, so the ink signature at 9 µm is non-linear and the networks are not leaving linear evidence behind.
 8. The clutter power law: the papyrus texture of every scroll falls as about f^−2 at periods of 60-250 µm and steeper below 60 µm (the resolution roll-off); the ink maps fall as f^−4. By Burgess's size law this prices every "aggregate over a larger area" idea on 9 µm maps at one to two orders of magnitude below a stroke-scale detector.
 9. A reconstruction-setting test on the same acquisition (PHerc. 0139 original against two re-retrievals): the setting moves the clutter index by 2× and the readers by 0.05-0.08 AUC, so scan-quality indices and campaign comparisons depend on unpublished retrieval parameters.
-10. A same-letters, same-papyrus comparison of the 2.403 µm and 9.366 µm scans of PHerc. 0841: ink readable at 2.4 µm down to about 55% of the contrast that the 9 µm reader needs (six letter units, wide interval).
+10. A same-letters, same-papyrus comparison of the 2.403 µm and 9.366 µm scans of PHerc. 0841: AUC 0.65 at 55% of the letters' contrast at 2.403 µm against 77% at 9.366 µm, about 0.7× the 9 µm threshold (six letter units, wide interval).
 
 **Independent confirmations of earlier work:**
 - no pixel-AUC gain from fine-tuning at 9 µm (TAUIL, Jashann);
@@ -244,7 +244,7 @@ The same comparison on 11 survey renders with a matched pipeline (Reader V3, AUC
   - The pre-registered verdict is MIXED.
 - **Voxel size (round 26).** We resampled the survey renders by the 8% voxel difference, band-limited, both ways, and reran the bench. The letter crops were cut to 720 rows and the native renders rerun the same way:
 
-  | letters | native gap | 116 keV made coarser | 113 keV made finer |
+  | letters | native gap | change in the gap when the 116 keV scrolls are made coarser | change when the 113 keV scrolls are made finer |
   | --- | --- | --- | --- |
   | 1447 | +0.041 | −0.026 | +0.005 |
   | 0841 | +0.031 | −0.062 | +0.041 |
@@ -260,7 +260,7 @@ What holds:
 
 What does not hold is a clean campaign effect. Voxel size, the models' domain, our renders and the crop window each move the gap by 0.01-0.06.
 
-The index predicts the readability of injected ink; whether it predicts native readability across scrolls is untested. It is a property of the released volume, not of the papyrus: re-reconstructing the same acquisition with weaker phase retrieval doubles it (round 30).
+The index predicts the readability of injected ink; whether it predicts native readability across scrolls is untested. It is a property of the released volume, not of the papyrus: re-reconstructing the same acquisition with another phase-retrieval setting doubles it (round 30).
 
 ## Why the ink is hard to see
 
@@ -296,7 +296,7 @@ The index predicts the readability of injected ink; whether it predicts native r
 - Raw CT slices show no extra ring energy (113/116 ratio 0.73), and the spectral ratio does not follow a single power law.
 - This is a structured background at 40-90 µm periods in the reconstructed volumes. Object and acquisition are not separated.
 - A plausible acquisition cause is the organisers' decoherence: the 9.362 µm volumes are binned 4.681 µm acquisitions at 1.2 m, beyond their own rule of about 0.5 m at that pixel size. Binning and aliasing were not tested.
-- **The retrieval setting moves everything (round 30).** PHerc. 0139 exists as the released volume and as two re-retrievals of the same acquisition (pag0, pag50). On two labelled segments the re-retrievals have twice the clutter index (0.056 → 0.111 / 0.125), three times the gradient energy and the void-noise share (0.028 → 0.084 / 0.095), five to eight times the edge fringe and sharper sheet edges (1.0 against 2.4 layers), and both readers lose 0.05-0.08 AUC on them (intervals exclude 0; the models were trained on the original, so the loss is not a verdict on the setting itself). So a reconstruction setting changes the clutter index and the AUC by as much as the whole campaign gap. The retrieval parameters of the released volumes are not published; a difference between campaigns cannot be excluded.
+- **The retrieval setting moves everything (round 30).** PHerc. 0139 exists as the released volume and as two re-retrievals of the same acquisition (pag0 and pag50; the settings are inferred from the volume names and are not documented). The pre-registered renderer check failed on one segment because the official render is offset by 12 px from the tifxyz; the check was amended after the fact to allow that shift (r 0.899), and the JSON's verdict field still records the unamended INVALID. On two labelled segments the re-retrievals have twice the clutter index (0.056 → 0.111 / 0.125), three times the gradient energy and the void-noise share (0.028 → 0.084 / 0.095), five to eight times the edge fringe and sharper sheet edges (1.0 against 2.4 layers), and both readers lose 0.05-0.08 AUC on them (intervals exclude 0; the models were trained on the original, so the loss is not a verdict on the setting itself). So a reconstruction setting changes the clutter index and the AUC by as much as the whole campaign gap. The retrieval parameters of the released volumes are not published; a difference between campaigns cannot be excluded.
 
 **A different protocol at 9.4 µm was not shown to help (round 24, MIXED).**
 - On the same PHerc. 0841 papyrus we compared two 9.37 µm volumes: the 113 keV / 1.2 m scan, and a copy of the 2.403 µm / 77 keV / 0.22 m scan box-filtered and resampled to that grid (not a native acquisition).
@@ -380,8 +380,8 @@ In order of how directly our data support them:
    - noise is small at 9 µm;
    - making a background 8% coarser cost the models up to 0.06 AUC.
 
-   For the eligible scrolls this prices the 2.4 µm route: a 9 µm null bounds ink above about 75% of 1447's contrast, and the 2.403 µm scans of PHerc. 1203 and 0846A would see ink down to roughly half of that, if 0841 generalises.
-4. **Publish the retrieval parameters of every released volume, and sweep them once.** A re-retrieval of PHerc. 0139 with weaker phase retrieval doubled the clutter index and cost the readers 0.05-0.08 AUC; stronger smoothing lowered clutter at the price of sharpness (edges 2.4 against 1.0 layers). If the projections are kept, a δ/β sweep on one labelled 9 µm scroll, read by a model trained at each setting, would price that trade for the models in use. Until the parameters are known, scan-quality indices and campaign comparisons carry this confound.
+   For the eligible scrolls this prices the 2.4 µm route: a 9 µm null bounds ink above about 75% of 1447's contrast, and the 2.403 µm scans of PHerc. 1203 and 0846A would see ink down to about 0.7× that threshold, if 0841 generalises.
+4. **Publish the retrieval parameters of every released volume, and sweep them once.** Two re-retrievals of PHerc. 0139 with other phase-retrieval settings (pag0 and pag50, inferred from the volume names and not documented) doubled the clutter index and cost the readers 0.05-0.08 AUC (models trained on the original reconstruction); the released volume is smoother and less cluttered, at the price of sharpness (edges 2.4 against 1.0 layers). If the projections are kept, a δ/β sweep on one labelled 9 µm scroll, read by a model trained at each setting, would price that trade for the models in use. Until the parameters are known, scan-quality indices and campaign comparisons carry this confound.
 5. **Separate object from acquisition with one calibration piece.** Scan a blank carbonised piece and a graded ink wedge over a small protocol matrix (for example 77, 100 and 113 keV; 0.2, 0.6 and 1.2 m; 2.4, 4.7 and 9.4 µm). This would settle whether the 113 keV texture comes from the papyri or the set-up, and give α a physical unit. Opened pieces of 0268, 0358 and 0826 in Naples frames could also give in-domain labels, as PHerc. 1667's Fragment 5 did.
 6. **Lead K-edge subtraction only where XRF finds lead in the writing.** Two scans bracketing 88.0 keV cancel the attenuation of carbon, but about a tenth of the phase term survives between 86 and 90 keV, so phase retrieval or a short distance is needed. In-situ XRF screening of library scrolls has been proposed ([PLOS ONE, 2026](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0353485)).
 7. **Other contrast mechanisms are speculative.** Neutron plus X-ray tomography and dark-field imaging could in principle separate soot from char, but resolution and sensitivity at these scales are unproven.

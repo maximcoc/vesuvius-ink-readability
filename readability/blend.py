@@ -14,20 +14,22 @@ import numpy as np
 from scipy.signal import fftconvolve
 
 
-def window_from_masks(B, A):
-    """position (y, x) of the window of B maximising the overlap of papyrus (B[33] > 0) with mask A"""
-    sc = fftconvolve((B[33] > 0).astype(np.float32), A[::-1, ::-1].astype(np.float32), mode='valid')
+def window_from_masks(B, A, surface=33):
+    """position (y, x) of the window of B maximising the overlap of papyrus (B[surface] > 0) with mask A"""
+    sc = fftconvolve((B[surface] > 0).astype(np.float32), A[::-1, ::-1].astype(np.float32), mode='valid')
     return np.unravel_index(int(np.argmax(sc)), sc.shape)
 
 
 def make(R, lab, cert, B, alphas, pos=None, bg_surface=33, max_shift=4):
-    """R (Ls, H, W) uint8 source; lab, cert (H, W) bool; B (66, Hb, Wb) background render.
+    """R (Ls, H, W) uint8 source; lab, cert (H, W) bool; B (L, Hb, Wb) background render with the mesh at layer
+    bg_surface (33 in our 66-layer renders, 20 in a 41-layer readability.tifxyz band); B needs at least
+    bg_surface - (Ls - 1) / 2 + Ls + max_shift layers above the mesh (36 for a 24-layer source at bg_surface 20).
     Returns ({alpha: uint8 (Ls, H, W)}, J, info, Bw, s) or None when the joint papyrus is too small."""
     Ls, H, W = R.shape
     sc_src = int(round((Ls - 1) / 2 + 0.01))                            # 12 for 24 layers, 14 for 28
     off = int(round(bg_surface - 0.5 - (Ls - 1) / 2))                   # 21 for 24 layers, 19 for 28
     A = (R[sc_src] > 0) & cert
-    yb, xb = window_from_masks(B, A) if pos is None else pos
+    yb, xb = window_from_masks(B, A, bg_surface) if pos is None else pos
     Bw = B[:, yb:yb + H, xb:xb + W]
     J = (R[sc_src] > 0) & (Bw[bg_surface] > 0)
     if J.sum() < 1000 or (J & cert & lab).sum() < 500:
