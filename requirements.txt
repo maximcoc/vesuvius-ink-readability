@@ -1,0 +1,6 @@
+numpy>=2.0
+scipy>=1.13
+zarr>=3.0
+pillow>=10.0
+torch>=2.4
+# the vesuvius package from https://github.com/ScrollPrize/villa (ink_9um checkpoint loading and inference helpers)

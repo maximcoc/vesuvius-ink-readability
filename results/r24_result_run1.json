@@ -1,0 +1,81 @@
+{
+ "20260220213127-w00": {
+  "native_113keV": {
+   "F_interior": 0.27547567272639745,
+   "readerv2": {
+    "auc": 0.0,
+    "direction": "reverse",
+    "start": 3,
+    "dy": 24,
+    "dx": 24
+   },
+   "readerv3": {
+    "auc": 0.0,
+    "direction": "reverse",
+    "start": 3,
+    "dy": 24,
+    "dx": 24
+   }
+  },
+  "down_77keV": {
+   "F_interior": 0.2478448888536447,
+   "readerv2": {
+    "auc": 0.0,
+    "direction": "reverse",
+    "start": 3,
+    "dy": 24,
+    "dx": 24
+   },
+   "readerv3": {
+    "auc": 0.0,
+    "direction": "reverse",
+    "start": 3,
+    "dy": 24,
+    "dx": 24
+   }
+  },
+  "dAUC_v3": 0.0,
+  "dAUC_v2": 0.0,
+  "F_ratio": 0.8996979167006313
+ },
+ "20260221022814-auto_grown_20260220174252405": {
+  "native_113keV": {
+   "F_interior": 0.2529881325726051,
+   "readerv2": {
+    "auc": 0.8829943929822925,
+    "direction": "forward",
+    "start": 5,
+    "dy": -11,
+    "dx": -12
+   },
+   "readerv3": {
+    "auc": 0.9166302115787012,
+    "direction": "forward",
+    "start": 5,
+    "dy": -14,
+    "dx": -15
+   }
+  },
+  "down_77keV": {
+   "F_interior": 0.23232265150699483,
+   "readerv2": {
+    "auc": 0.9085601693388555,
+    "direction": "forward",
+    "start": 5,
+    "dy": -14,
+    "dx": -10
+   },
+   "readerv3": {
+    "auc": 0.9206644833322559,
+    "direction": "forward",
+    "start": 5,
+    "dy": -8,
+    "dx": -10
+   }
+  },
+  "dAUC_v3": 0.004034271753554752,
+  "dAUC_v2": 0.025565776356562986,
+  "F_ratio": 0.9183144250464812
+ },
+ "verdict": "MIXED"
+}

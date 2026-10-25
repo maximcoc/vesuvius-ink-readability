@@ -1,0 +1,32 @@
+segments: 1722 objects, 0.48 GB
+20251028213516-auto_grown_20251028213516907: 310 volume chunks
+20251028220042-auto_grown_20251028220042762: 280 volume chunks
+20251028220955-auto_grown_20251028220955262: 273 volume chunks
+20251028222030-auto_grown_20251028222030940: 412 volume chunks
+20251028225813-auto_grown_20251028225813045: 324 volume chunks
+20251029010146-auto_grown_20251029010146642: 75 volume chunks
+volume: 523 chunks, at most 1.10 GB
+FETCHED 526 objects, 1.10 GB in data/ext/p0800_vol
+TX800_FETCH_DONE
+20251028213516-auto_grown_20251028213516907: official (31, 2160, 2240), ours (41, 2160, 2240); segment px official 47.2%, ours 45.9%; best depth mapping i = -1 j + 35.00: mean r 0.9738 (min 0.969, max 0.981)
+20251028220042-auto_grown_20251028220042762: official (31, 2040, 2000), ours (41, 2040, 2000); segment px official 51.7%, ours 50.3%; best depth mapping i = -1 j + 35.00: mean r 0.9763 (min 0.968, max 0.984)
+20251028220955-auto_grown_20251028220955262: official (31, 2100, 2100), ours (41, 2100, 2100); segment px official 46.4%, ours 45.1%; best depth mapping i = -1 j + 35.00: mean r 0.9761 (min 0.966, max 0.986)
+20251028222030-auto_grown_20251028222030940: official (31, 2580, 2580), ours (41, 2580, 2580); segment px official 47.0%, ours 46.0%; best depth mapping i = -1 j + 35.00: mean r 0.9763 (min 0.968, max 0.982)
+20251028225813-auto_grown_20251028225813045: official (31, 2300, 2260), ours (41, 2300, 2260); segment px official 47.2%, ours 46.0%; best depth mapping i = -1 j + 35.00: mean r 0.9762 (min 0.969, max 0.984)
+20251029010146-auto_grown_20251029010146642: official (31, 980, 980), ours (41, 980, 980); segment px official 49.7%, ours 46.7%; best depth mapping i = -1 j + 35.00: mean r 0.9715 (min 0.961, max 0.981)
+TX800_RENDER_DONE
+20251028213516-auto_grown_20251028213516907 41 layers: valid 69.9%, near 33.6%, depth contrast median 34.0 (share >= 25: 80%), papyrus checked 2,185,640 px
+20251028213516-auto_grown_20251028213516907 31 layers: valid 61.6%, near 36.1%, depth contrast median 33.7 (share >= 25: 77%), papyrus checked 2,242,499 px
+20251028220042-auto_grown_20251028220042762 41 layers: valid 72.7%, near 33.7%, depth contrast median 36.0 (share >= 25: 84%), papyrus checked 2,050,641 px
+20251028220042-auto_grown_20251028220042762 31 layers: valid 63.8%, near 35.9%, depth contrast median 34.9 (share >= 25: 78%), papyrus checked 2,111,200 px
+20251028220955-auto_grown_20251028220955262 41 layers: valid 78.5%, near 33.5%, depth contrast median 38.5 (share >= 25: 87%), papyrus checked 1,986,660 px
+20251028220955-auto_grown_20251028220955262 31 layers: valid 69.6%, near 36.9%, depth contrast median 37.9 (share >= 25: 84%), papyrus checked 2,042,297 px
+20251028222030-auto_grown_20251028222030940 41 layers: valid 63.5%, near 29.4%, depth contrast median 31.8 (share >= 25: 73%), papyrus checked 3,060,161 px
+20251028222030-auto_grown_20251028222030940 31 layers: valid 53.9%, near 32.2%, depth contrast median 30.5 (share >= 25: 68%), papyrus checked 3,130,900 px
+20251028225813-auto_grown_20251028225813045 41 layers: valid 57.3%, near 32.6%, depth contrast median 29.6 (share >= 25: 67%), papyrus checked 2,349,340 px
+20251028225813-auto_grown_20251028225813045 31 layers: valid 48.6%, near 35.5%, depth contrast median 28.3 (share >= 25: 61%), papyrus checked 2,407,300 px
+20251029010146-auto_grown_20251029010146642 41 layers: valid 45.3%, near 34.7%, depth contrast median 25.7 (share >= 25: 53%), papyrus checked 448,561 px
+20251029010146-auto_grown_20251029010146642 31 layers: valid 40.5%, near 37.4%, depth contrast median 25.5 (share >= 25: 52%), papyrus checked 477,099 px
+area-weighted valid share: 41-layer bands 66.8%, official 31 layers 58.0%; verdict SIMILAR
+TX800_CHECK_DONE
+TX800_ALL_DONE

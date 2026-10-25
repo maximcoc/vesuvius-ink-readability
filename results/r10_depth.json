@@ -1,0 +1,16 @@
+{
+ "counts": {
+  "L1447": 35,
+  "L343": 15,
+  "F0268": 166,
+  "F1218": 122,
+  "F0800": 79
+ },
+ "direction": "letters lower",
+ "threshold": 0.2833122144093297,
+ "train_auc": 0.8008032128514057,
+ "test_auc": 0.7337597725657428,
+ "letters_kept": 0.7142857142857143,
+ "lights_passing": 0.2885572139303483,
+ "verdict": "PARTIAL"
+}

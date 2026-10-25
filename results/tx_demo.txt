@@ -1,0 +1,21 @@
+20260220213127-w00: 1608 chunks
+20260220214732-auto_grown_20260220144552896: 1614 chunks
+20260221022814-auto_grown_20260220174252405: 1530 chunks
+total 1974 chunks, at most 4.14 GB (uncompressed 2 MB chunks)
+FETCHED 1977 objects, 4.14 GB on disk in data/ext/p0841_9um_vol
+TX_FETCH_DONE
+20260220213127-w00: official (28, 4220, 4760), ours (41, 4220, 4760); segment px official 71.8%, ours 70.9%; best depth mapping i = -1 j + 33.50: mean r 0.9666 (min 0.943, max 0.979); in-plane best shift (0, 0) r 0.9313 vs (0, 0) 0.9313
+20260220214732-auto_grown_20260220144552896: official (28, 4640, 4720), ours (41, 4640, 4720); segment px official 66.1%, ours 65.3%; best depth mapping i = -1 j + 33.50: mean r 0.9643 (min 0.945, max 0.977); in-plane best shift (0, 0) r 0.9294 vs (0, 0) 0.9294
+20260221022814-auto_grown_20260220174252405: official (28, 3760, 4900), ours (41, 3760, 4900); segment px official 74.0%, ours 73.1%; best depth mapping i = -1 j + 33.50: mean r 0.9688 (min 0.953, max 0.979); in-plane best shift (0, 0) r 0.9331 vs (0, 0) 0.9331
+TX_RENDER_DONE
+20260220213127-w00 41-layer band: valid 83.2%, near 33.4%, depth contrast median 59.6 (share >= 25: 95%), papyrus checked 14,249,441 px
+warning: data/ext/p0841/PHerc0841/segments/20260220213127-w00/surface-volumes/9.366um-1.2m-113keV-volume-20250821151531.zarr has 28 layers around the mesh; the check needs about 40 (render a thicker band, e.g. python -m readability.tifxyz)
+20260220213127-w00 official 28 layers: valid 74.0%, near 36.3%, depth contrast median 55.4 (share >= 25: 92%), papyrus checked 14,419,732 px
+20260220214732-auto_grown_20260220144552896 41-layer band: valid 83.2%, near 32.9%, depth contrast median 60.8 (share >= 25: 95%), papyrus checked 14,302,574 px
+warning: data/ext/p0841/PHerc0841/segments/20260220214732-auto_grown_20260220144552896/surface-volumes/9.366um-1.2m-113keV-volume-20250821151531.zarr has 28 layers around the mesh; the check needs about 40 (render a thicker band, e.g. python -m readability.tifxyz)
+20260220214732-auto_grown_20260220144552896 official 28 layers: valid 73.7%, near 36.2%, depth contrast median 56.5 (share >= 25: 92%), papyrus checked 14,484,190 px
+20260221022814-auto_grown_20260220174252405 41-layer band: valid 81.8%, near 31.7%, depth contrast median 59.2 (share >= 25: 95%), papyrus checked 13,462,604 px
+warning: data/ext/p0841/PHerc0841/segments/20260221022814-auto_grown_20260220174252405/surface-volumes/9.366um-1.2m-113keV-volume-20250821151531.zarr has 28 layers around the mesh; the check needs about 40 (render a thicker band, e.g. python -m readability.tifxyz)
+20260221022814-auto_grown_20260220174252405 official 28 layers: valid 71.5%, near 35.1%, depth contrast median 54.9 (share >= 25: 91%), papyrus checked 13,642,490 px
+TX_CHECK_DONE
+TX_ALL_DONE

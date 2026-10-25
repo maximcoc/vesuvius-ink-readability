@@ -1,0 +1,233 @@
+{
+ "0268": {
+  "valid_share": 0.1436620333050432,
+  "near_share": 0.2558511949099468,
+  "renders": [
+   {
+    "render": "T067.zarr",
+    "papyrus": 19660440,
+    "valid_share": 0.15919068952678578,
+    "near_share": 0.25365403534265735
+   },
+   {
+    "render": "T068.zarr",
+    "papyrus": 19941876,
+    "valid_share": 0.1547324333979411,
+    "near_share": 0.2538721924518457
+   },
+   {
+    "render": "T069.zarr",
+    "papyrus": 20249337,
+    "valid_share": 0.15156669080079016,
+    "near_share": 0.2507447562415998
+   },
+   {
+    "render": "T070.zarr",
+    "papyrus": 20558459,
+    "valid_share": 0.14855135786198762,
+    "near_share": 0.25714025632722076
+   },
+   {
+    "render": "T071.zarr",
+    "papyrus": 20724219,
+    "valid_share": 0.14431704277975446,
+    "near_share": 0.25099486501866686
+   },
+   {
+    "render": "T072.zarr",
+    "papyrus": 21102957,
+    "valid_share": 0.1445699292284015,
+    "near_share": 0.2538840776661478
+   },
+   {
+    "render": "T073.zarr",
+    "papyrus": 21399599,
+    "valid_share": 0.14231836774137682,
+    "near_share": 0.25398547917030584
+   },
+   {
+    "render": "T074.zarr",
+    "papyrus": 21710158,
+    "valid_share": 0.14175350543280246,
+    "near_share": 0.25431203535607416
+   },
+   {
+    "render": "T075.zarr",
+    "papyrus": 22010020,
+    "valid_share": 0.14063113073045821,
+    "near_share": 0.2548300742998888
+   },
+   {
+    "render": "T076.zarr",
+    "papyrus": 22304038,
+    "valid_share": 0.1400655343216327,
+    "near_share": 0.25826729410469246
+   },
+   {
+    "render": "T077.zarr",
+    "papyrus": 22558360,
+    "valid_share": 0.13909437565496782,
+    "near_share": 0.25515203453694874
+   },
+   {
+    "render": "T078.zarr",
+    "papyrus": 22844598,
+    "valid_share": 0.13705257584309427,
+    "near_share": 0.2542525162804053
+   },
+   {
+    "render": "T079.zarr",
+    "papyrus": 23146678,
+    "valid_share": 0.13926197098348195,
+    "near_share": 0.25545967490752153
+   },
+   {
+    "render": "T080.zarr",
+    "papyrus": 23441860,
+    "valid_share": 0.13638674576164178,
+    "near_share": 0.26217964136284744
+   },
+   {
+    "render": "T081.zarr",
+    "papyrus": 23670137,
+    "valid_share": 0.14068993348031741,
+    "near_share": 0.25980361244988964
+   },
+   {
+    "render": "T082.zarr",
+    "papyrus": 24028800,
+    "valid_share": 0.14343346317752032,
+    "near_share": 0.2634942815013576
+   }
+  ]
+ },
+ "0800": {
+  "valid_share": 0.630926317956879,
+  "near_share": 0.3194633004477948,
+  "renders": [
+   {
+    "render": "e050.zarr",
+    "papyrus": 11271486,
+    "valid_share": 0.6970954850141321,
+    "near_share": 0.3346357311962809
+   },
+   {
+    "render": "e051.zarr",
+    "papyrus": 11479213,
+    "valid_share": 0.7104444355201005,
+    "near_share": 0.3392824802096
+   },
+   {
+    "render": "e052.zarr",
+    "papyrus": 11727981,
+    "valid_share": 0.7232263592514346,
+    "near_share": 0.322182955994381
+   },
+   {
+    "render": "e053.zarr",
+    "papyrus": 11786622,
+    "valid_share": 0.688439317049448,
+    "near_share": 0.32551790193550356
+   },
+   {
+    "render": "e054.zarr",
+    "papyrus": 12155396,
+    "valid_share": 0.6801980782855614,
+    "near_share": 0.3253572747326857
+   },
+   {
+    "render": "e055.zarr",
+    "papyrus": 12385891,
+    "valid_share": 0.6524941160874095,
+    "near_share": 0.31716066417041616
+   },
+   {
+    "render": "e056.zarr",
+    "papyrus": 12599232,
+    "valid_share": 0.6438633719896578,
+    "near_share": 0.3156729433158814
+   },
+   {
+    "render": "e057.zarr",
+    "papyrus": 12838965,
+    "valid_share": 0.6687248543788382,
+    "near_share": 0.31541108594663125
+   },
+   {
+    "render": "e058.zarr",
+    "papyrus": 13043336,
+    "valid_share": 0.665809728431438,
+    "near_share": 0.3176807095037297
+   },
+   {
+    "render": "e059.zarr",
+    "papyrus": 13282480,
+    "valid_share": 0.671918948870994,
+    "near_share": 0.31400453794223926
+   },
+   {
+    "render": "e060.zarr",
+    "papyrus": 13489325,
+    "valid_share": 0.6219288214940333,
+    "near_share": 0.3175439244761246
+   },
+   {
+    "render": "e061.zarr",
+    "papyrus": 13718016,
+    "valid_share": 0.6207950187548986,
+    "near_share": 0.32052802253056456
+   },
+   {
+    "render": "e062.zarr",
+    "papyrus": 13948295,
+    "valid_share": 0.6119930070306084,
+    "near_share": 0.32615516937806127
+   },
+   {
+    "render": "e063.zarr",
+    "papyrus": 14162587,
+    "valid_share": 0.5955252384327807,
+    "near_share": 0.30976498243219436
+   },
+   {
+    "render": "e064.zarr",
+    "papyrus": 14405552,
+    "valid_share": 0.6043854480550277,
+    "near_share": 0.31511148100052994
+   },
+   {
+    "render": "e065.zarr",
+    "papyrus": 14620883,
+    "valid_share": 0.5886027540197127,
+    "near_share": 0.31501929143428714
+   },
+   {
+    "render": "e066.zarr",
+    "papyrus": 14750737,
+    "valid_share": 0.5853944789334933,
+    "near_share": 0.31718668210770123
+   },
+   {
+    "render": "e067.zarr",
+    "papyrus": 15075701,
+    "valid_share": 0.5653286702886984,
+    "near_share": 0.309360174197786
+   },
+   {
+    "render": "e068.zarr",
+    "papyrus": 15314232,
+    "valid_share": 0.5642593765067684,
+    "near_share": 0.3202989538835988
+   },
+   {
+    "render": "e069.zarr",
+    "papyrus": 15516007,
+    "valid_share": 0.5520163789562611,
+    "near_share": 0.31397101489885104
+   }
+  ]
+ },
+ "ratio_a": 0.2277001754662291,
+ "ratio_b": 0.8008782058888069,
+ "verdict": "FAIL"
+}

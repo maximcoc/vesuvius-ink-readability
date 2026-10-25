@@ -1,0 +1,42 @@
+{
+ "20260220213127-w00": {
+  "native_113keV": {
+   "F_interior": 0.2879570087203242,
+   "readerv2": {
+    "auc": 0.8867243195321908,
+    "direction": "forward",
+    "start": 7,
+    "dy": -3,
+    "dx": -3
+   },
+   "readerv3": {
+    "auc": 0.8952439222492214,
+    "direction": "forward",
+    "start": 7,
+    "dy": -3,
+    "dx": -2
+   }
+  },
+  "down_77keV": {
+   "F_interior": 0.2440385400785203,
+   "readerv2": {
+    "auc": 0.9003951524012718,
+    "direction": "forward",
+    "start": 7,
+    "dy": 0,
+    "dx": 3
+   },
+   "readerv3": {
+    "auc": 0.8947237841902863,
+    "direction": "forward",
+    "start": 7,
+    "dy": -6,
+    "dx": 5
+   }
+  },
+  "dAUC_v3": -0.0005201380589351379,
+  "dAUC_v2": 0.013670832869080995,
+  "F_ratio": 0.8474825501314353
+ },
+ "verdict": "MIXED"
+}

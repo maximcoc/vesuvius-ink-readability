@@ -1,0 +1,14 @@
+{
+  "checkpoint": "checkpoints/reader-v3.pth",
+  "window_start": 4,
+  "alphas": [1.0, 0.85, 0.7],
+  "alpha_ref": 0.85,
+  "sources": ["crops/0841_c0.npz", "crops/0841_w00.npz", "crops/0841_c2.npz"],
+  "scrolls": {
+    "800": ["renders/PHerc0800/e050.zarr", "renders/PHerc0800/e057.zarr", "renders/PHerc0800/e064.zarr"],
+    "1218": ["renders/PHerc1218/T039.zarr", "renders/PHerc1218/T040.zarr", "renders/PHerc1218/T041.zarr"],
+    "1545": ["renders/PHerc1545/t033.zarr", "renders/PHerc1545/t034.zarr", "renders/PHerc1545/t035.zarr"]
+  },
+  "reference": "800",
+  "bootstrap": 1000
+}
