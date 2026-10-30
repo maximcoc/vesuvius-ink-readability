@@ -478,6 +478,70 @@ Reader v2 was trained on fragment 343P, so these numbers are optimistic.
 - Using the section-7 calibration for this papyrus: no ink stronger than about 55% of PHerc. 343's contrast is visible to Reader v2 in this band and these four windings.
 - The bound covers only the searched area: z 6610-8110, radius about 2400 vx.
 
+## 41. Round 33: one-class anomaly detection on the scroll's own blank papyrus (approved by the user 2026-10-30 "proviamo l'idea 7"; rule written before any computation; no downloads)
+
+**Why:** every detector we have tested is supervised on ink from somewhere else (343, 1447, the training scrolls of the public models). Steganalysis and industrial texture inspection (MVTec) take the opposite route: model the clean material itself from the large clean area available, then flag what deviates. An unread scroll offers hundreds of cm² of papyrus that is almost certainly ink-free (line gaps, margins, and in our case whole bands), so a cover model costs nothing. The idea appears in no earlier file of ours (cross-area list of 2026-10-25, idea 7; compiler's keyword check: steganalysis is never cited). The stated failure mode is that material anomalies (porous patches, folds, cracks) deviate more than ink does. Rounds 5 and 28 give a strong prior against: ink is clutter-limited and no linear template sees it; a one-class detector is a different statistic (a distance from the typical texture, quadratic in the data), so the question is empirical.
+
+**Data (local, nothing to download):** the T1 bench (1447 letters in 800 papyrus; crops w058a, w060a, w060b on the 800 windings e052, e058, e068; α 1/0.85/0.7/0.5/0.35/0; 24 layers, 1820 × 4400 px; letter pixels are 15-25% of the supervised papyrus, Nader's labels being thick), the T1b blends of the same crops on e050/e051/e069, and the Reader V3 maps of T1 (window s2, d −2, reverse) as the supervised reference.
+
+**Detector (fixed before running):**
+- Input: layers 2-19 (17 layers) of the blend, standardised per layer on the joint papyrus as round 28, zero outside it.
+- Residuals per layer (steganalysis rich-model style, 3D): first differences along x, y and depth; 2D Laplacian; 3 × 3 "square" residual (value minus the mean of the 8 in-plane neighbours); 3D six-neighbour residual. Each at two scales (raw, and after a 2D Gaussian of σ 1.5 px). Twelve residual maps per layer.
+- Local statistics in a square window of w px, averaged over three depth groups (layers 2-7, 8-13, 14-19): mean |r|, mean r², and the lag-1 co-occurrence moments mean r·r(x+1) and mean r·r(y+1). Plus the local mean and SD of the standardised value per depth group. 150 features per pixel, computed on a stride-2 grid and upsampled.
+- **Primary (A, "matched cover"):** a Gaussian cover model (mean and Ledoit-Wolf covariance on 300k pixels) fitted on the non-letter supervised pixels of the other fold's T1b blends at the same α; score = Mahalanobis distance. Cross-fitted by winding as rounds 6 and 28: fold A fits on w060a + w060b and scores w058a; fold B fits on w058a and scores w060a + w060b. Labels are used only to exclude letter pixels from the cover (an ink-free cover is the premise of the idea: in an unread scroll the blank areas are blank). The window w ∈ {11, 21} is chosen per fold on the fitting crops' own blends at α 0.7 (in-sample AUC), then held fixed for every α.
+- **(B, "pure cover", the label-free version):** the same model fitted on pure PHerc. 800 papyrus only (the f000 windows of the other fold's crops in T1 and T1b, no 1447 texture at all) and applied to the blends. The difference A − B measures the cover-source mismatch created by the bench (at α > 0 the whole crop carries 1447 texture), which an unread scroll would not have.
+- **(C, non-parametric):** k-nearest-neighbour distance (k = 3) to a 30k-pixel bank of the matched cover in whitened feature space (PatchCore-style), on a stride-4 grid, at α 1, 0.7, 0.5 and 0 only.
+- **(D, Gabor energy):** the round-28 Gabor energy channels (3 scales × 6 orientations × 17 layers) box-averaged over w, Mahalanobis distance against the matched cover.
+- Direction fixed: a larger distance means more anomalous means "ink". No sign flipping after the fact; an AUC below 0.5 is reported as "ink looks more typical than blank papyrus".
+
+**Measurements:** pooled pixel AUC per α (letters against the other supervised pixels, the three crops pooled, as round 18); d′ and α₀.₆₅; false lights at α 0 at the threshold giving 50% letter recall at α 1 (V3: 0.075); **fusion** = per-crop rank average of the detector score and the V3 map, AUC per α, gain over V3 alone = mean over α 0.7 and 0.5 with the round-10 paired bootstrap (1000 resamples over letter components and 256-px tiles); the same gain for the detector alone against V3.
+
+**Controls:**
+- (a) α 0: AUC within 0.50 ± 0.03 for A and B (the detector never sees labels, so a departure would mean the label positions coincide with blank-papyrus anomalies of the background window; the round is then INVALID).
+- (b) Positive control of the pipeline: 60 disks of radius 8 px, amplitude +1 SD, Gaussian-blurred (σ 2), added to layers 8-13 of the pure 800 window (f000) of each test crop; the primary detector must give AUC ≥ 0.90 for disk pixels against the rest. Otherwise the detector is broken and the round is INVALID.
+- (c) Material false positives: the share of blank pixels above the 50%-recall threshold (false lights), reported for A, B and V3.
+
+**Rule (primary = A):**
+- **STANDALONE:** AUC(A) at α 0.7 ≥ AUC(V3) at α 0.7 − 0.03 (V3: 0.623, so ≥ 0.59) and AUC(A) at α 1 ≥ 0.70. A label-free detector would then be close to the trained reader and the route deserves a real version (deep features, more cover).
+- **COMPLEMENTARY:** not standalone, but the fusion gain over V3 at α 0.7/0.5 ≥ +0.03 with the 95% interval above 0.
+- **KILL:** AUC(A) at α 0.85 ≤ 0.55 and the fusion gain < +0.01 or with an interval that includes 0.
+- **PARTIAL** otherwise.
+- B, C and D never change the verdict; they are reported in full. If B beats A, the matched cover is not the right cover and the reading is stated accordingly.
+
+**Cost:** no downloads; about 1.5-2.5 h of GB10 (feature maps 18 blends × 2 covers, k-NN about 30 min); about 1 GB of score maps in `/mnt/data/vesuvius/eval/r33`; root disk untouched (11 GB free).
+
+**Run:** `r33/r33_run.sh` on the ZGX; output `~/vesuvius/eval/r33_result.txt` (ends with `R33_DONE`), JSON `r33_result.json`, figure `figures/r33_maps.png`.
+
+**Amendment after the first run (2026-10-30 16:31, flagged; letter results of that run are kept below, verdict INVALID):** the positive control (b) failed (AUC 0.61 / 0.59 / 0.61 on the three crops) while the α-0 control passed (0.513 / 0.517). A +1 SD bump of radius 8 px over six layers shifts a 21-px local mean by about 0.45 SD, which is one unit along one of 150 whitened directions: the full Mahalanobis distance (a χ² with 150 degrees of freedom) does not move. This is a property of the statistic, not a bug. Amended design: (1) the features gain the local mean and SD of each of the 17 layers (184 dimensions); (2) five statistics are computed on the same cover: full Mahalanobis, max |z| over whitened coordinates, Mahalanobis on the top 10 and top 30 principal components of the cover, and Mahalanobis on the 34 per-layer mean/SD features alone; (3) the statistic is **selected per fold on the positive control only** (synthetic disks on the pure 800 window of the test crops, pure cover; no letter label is involved), and the selected statistic must reach ≥ 0.90 there; (4) the rule, controls and measurements are unchanged and apply to the selected statistic. If no statistic reaches 0.90, the verdict is **DETECTOR INSENSITIVE**: the texture statistics of blank papyrus vary more, window by window, than a 1 SD / 140 µm / 50 µm-deep deviation, so this family cannot see ink that is fainter than that; the letter AUCs are reported anyway. First-run letter numbers, for the record: matched cover 0.513 / 0.506 / 0.501 / 0.504 / 0.507 / 0.513 at α 1 / 0.85 / 0.7 / 0.5 / 0.35 / 0; pure cover 0.506-0.517; k-NN 0.521 / 0.507 / 0.507 / 0.514 at α 1 / 0.7 / 0.5 / 0; Gabor 0.559 / 0.543 / 0.529 / 0.518 / 0.514 / 0.509; fusion with V3 0.746 at α 1 against V3 alone 0.826 (gain at 0.7/0.5 −0.026 [−0.085, +0.043]); false lights 0.38 (matched) and 0.55 (pure) against 0.075 for V3.
+
+### Result (2026-10-30, 16:17-16:47, two runs of 14 min each on the GB10; `r33_result.txt`, `r33_result.json`; the unamended first run is kept as `r33_result_v1.json`): KILL
+
+**Controls (amended design).** α 0: AUC 0.508 (matched cover) and 0.509 (pure cover). Positive control (+1 SD disks on the pure 800 windows, pure cover): full Mahalanobis 0.997-0.999, max |z| 0.997-0.999, the 34 per-layer means/SDs 0.998-1.000 (selected on both folds), PCA-10 0.49-0.59, PCA-30 0.56-0.67. So the first run's blindness came from the features (depth-group means only), not only from the statistic: with per-layer local means every full-dimension statistic sees the disks. Windows chosen in-sample: 11 (fold A), 21 (fold B); in-sample AUC at α 0.7 on the fitting blends 0.53 and 0.49. Both controls pass; the rule applies.
+
+**Pooled AUC on T1 (letters against other supervised pixels, three crops):**
+
+| detector | α 1 | 0.85 | 0.7 | 0.5 | 0.35 | 0 |
+|---|---|---|---|---|---|---|
+| Reader V3 (reference) | 0.826 | 0.725 | 0.623 | 0.542 | 0.522 | 0.509 |
+| A, matched cover (primary) | 0.510 | 0.511 | 0.510 | 0.508 | 0.507 | 0.508 |
+| B, pure 800 cover | 0.514 | 0.516 | 0.515 | 0.512 | 0.510 | 0.509 |
+| C, k-NN (PatchCore style) | 0.521 | – | 0.516 | 0.516 | – | 0.521 |
+| D, Gabor energy | 0.557 | 0.541 | 0.528 | 0.518 | 0.513 | 0.509 |
+| fusion A + V3 (rank average) | 0.739 | 0.658 | 0.589 | 0.536 | 0.523 | 0.514 |
+
+- By statistic (matched cover, α 1 / 0.7): Mahalanobis 0.514 / 0.512, max |z| 0.502 / 0.512, PCA-10 0.494 / 0.495, PCA-30 0.508 / 0.512, per-layer means 0.510 / 0.510. The choice of statistic does not matter.
+- False lights at α 0 (50%-recall threshold of α 1): matched 0.329, pure 0.193, V3 0.075.
+- Gains (α 0.7/0.5, paired bootstrap): fusion − V3 **−0.020 [−0.062, +0.023]**; matched − V3 −0.073 [−0.141, +0.013]; pure − matched +0.004 [−0.005, +0.013].
+- **RULE: KILL** (A at α 0.85 = 0.511 ≤ 0.55; fusion gain below +0.01 with an interval that includes 0).
+
+**Reading.**
+- A detector that finds a +1 SD, 140 µm, six-layer bump in blank papyrus with AUC 0.998 ranks real 1447 letters at full strength at 0.51. The letters change the local texture statistics (means, SDs and residual co-occurrence moments over 95-180 µm windows and 17 layers) by far less than blank papyrus varies from one window to the next. The anomaly maps draw the fibre grid and the bright specks; no letter is visible in them (`figures/r33_maps.png`).
+- Cover-source mismatch is not the reason: the pure 800 cover does as well as the matched one (+0.004). The non-parametric k-NN and the Gabor energy are no better (0.52 and 0.56 at α 1, at chance by α 0.5).
+- The stated failure mode is confirmed and quantified: what deviates from typical papyrus is material (porous patches, specks, folds), and the detector lights 19-33% of blank papyrus at the threshold that finds half the letters, against 7.5% for Reader V3.
+- Consistent with round 28 (no linear template) and round 5 (clutter-limited): whatever the networks use is a configuration-specific, non-linear fine structure that no window summary of this family captures, whether as a linear discriminant (28) or as a distance from the typical texture (33).
+- Not run: a deep one-class detector (PatchCore on ImageNet features or on an ink model's encoder). Since the hand-crafted family cannot see even the α 1 letters that V3 reads at 0.83, and round 6 found no learnable headroom, we do not expect it to change the verdict; it is the one untested variant of the idea.
+- Cross-area list of 2026-10-25: idea 7 done. The shortlist is exhausted (ideas 5 and 6 are data routes, not tests on existing data).
+
 ## 40. Round 32: how much contrast does 2.4 µm buy? The same PHerc. 0841 letters at 9.366 and 2.403 µm (rule written 2026-10-25 before any download; download approval asked separately)
 
 **Why:** every recommendation of "finer voxels" rests on the organisers' Scroll 4 result and on TAUIL's blind read (6 of 8 letters at 2.4 µm against 3 of 8 at 9 µm). Nobody has measured, on the same letters, how faint ink can be at 2.4 µm before a model loses it, against the same curve at 9 µm. PHerc. 0841 is the one eligible-campaign scroll with the organisers' labels on both canvases and official surface volumes at both voxel sizes; the 2.403 µm volumes of the two labelled windows are already local (round 24, 8.1 GB). Cross-area list of 2026-10-25, idea 3; asked by all three reviewers.

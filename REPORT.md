@@ -45,7 +45,7 @@ The valid share reflects both the segment and the scan, so the tool reports the 
 
 ## Setup
 
-Every number here comes from our own chain on one NVIDIA GB10 workstation. Each test had a written pass/kill rule before its computation, in a dated log published with the code (`docs/PREREGISTRATION_LOG.md`). We ran 32 rounds between 12 and 25 October 2026. Rules amended before results, and analyses made after seeing the data, are flagged where they are used.
+Every number here comes from our own chain on one NVIDIA GB10 workstation. Each test had a written pass/kill rule before its computation, in a dated log published with the code (`docs/PREREGISTRATION_LOG.md`). We ran 33 rounds between 12 and 30 October 2026. Rules amended before results, and analyses made after seeing the data, are flagged where they are used.
 
 **Data.** All volumes are public Vesuvius Challenge scans:
 - **Positives:**
@@ -139,6 +139,7 @@ Public work in September and October 2026 had already searched most of these scr
 8. The clutter power law: the papyrus texture of every scroll falls as about f^−2 at periods of 60-250 µm and steeper below 60 µm (the resolution roll-off); the ink maps fall as f^−4. By Burgess's size law this prices every "aggregate over a larger area" idea on 9 µm maps at one to two orders of magnitude below a stroke-scale detector.
 9. A reconstruction-setting test on the same acquisition (PHerc. 0139 original against two re-retrievals): the setting moves the clutter index by 2× and the readers by 0.05-0.08 AUC, so scan-quality indices and campaign comparisons depend on unpublished retrieval parameters.
 10. A same-letters, same-papyrus comparison of the 2.403 µm and 9.366 µm scans of PHerc. 0841: AUC 0.65 at 55% of the letters' contrast at 2.403 µm against 77% at 9.366 µm, about 0.7× the 9 µm threshold (six letter units, wide interval).
+11. A label-free, one-class anomaly detector on the scroll's own blank papyrus (steganalysis style: 184 texture statistics per pixel, Gaussian or k-NN cover, cross-fitted by winding): it finds a +1 SD synthetic bump with AUC 0.998 and ranks the real letters at 0.51 at every contrast, so ink at 9 µm changes the local texture statistics by far less than blank papyrus varies from window to window (round 33).
 
 **Independent confirmations of earlier work:**
 - no pixel-AUC gain from fine-tuning at 9 µm (TAUIL, Jashann);
@@ -163,6 +164,7 @@ For the models tested, PHerc. 1447 ink in PHerc. 800 papyrus is seen down to abo
 - **Evidence falls faster than contrast.** In d′ terms Reader v2 gives 1.24, 0.78, 0.39 and 0.14 at α 1, 0.85, 0.7 and 0.5, so d′ ∝ α^3.3.
   - A linear detector under this blend would lose evidence only in proportion to α. But the optimal linear detector sees nothing here (next bullet), so the steep fall is not an inefficiency relative to a linear optimum.
   - **The ideal linear observer is at chance (round 28).** A Hotelling (Fisher) discriminant on 3D patches of the standardised 17-layer window (15×15 or 21×21 px, covariance from signal-free papyrus, fitted on one winding's letters and scored on the other's) gives AUC 0.48 at every α, against 0.83 for Reader V3 at α 1; a quadratic Gabor-energy observer gives 0.51. The observer is sound: on its own training blends it reaches 0.58-0.63, on new letters of the same winding 0.57-0.61, and its α 0 and shifted-label controls sit at 0.47-0.50. What it learns in-sample is mostly a brightness offset that changes sign between windings. So at 9 µm there is no linear template of ink; the networks' evidence is non-linear fine structure (phase randomisation destroys it, below), and no linear detector of this patch size can replace them.
+  - **A label-free anomaly detector is at chance too (round 33).** A one-class model of the scroll's own blank papyrus (local means, SDs and residual co-occurrence moments of the 17-layer window over 11-21 px windows; Gaussian cover with Ledoit-Wolf covariance, or k-NN distance; fitted on other windings and scored on 1447 letters in 800 papyrus) gives AUC 0.51 at every α, a Gabor-energy variant 0.56 at α 1; fused with Reader V3 it loses 0.02. The detector is sound: it finds a +1 SD, 140 µm, six-layer synthetic bump in blank papyrus at AUC 0.998, and its α 0 control is 0.51. So the letters move the local texture statistics by less than blank papyrus varies from window to window; what deviates is material (porous patches, specks, folds: 19-33% of blank papyrus lit at the half-recall threshold, against 7.5% for V3).
   - Float logits give the same AUCs as the stored 8-bit maps.
 - **Reader V3 is cleaner, not more sensitive.** At the threshold that finds half the letters it lights 7.5% of blank papyrus, against 14.6% for Reader v2. Its gain at α 0.7-0.5 is +0.008 [−0.022, +0.030].
 - **The PHerc. 343 fade test agrees.** Reader v2 lights 75% of the 343 letter boxes at full strength, 50% at α 0.7 and 25% at 0.5, against 10-15% of random boxes. Reader v2 was trained on fragment 343P, so this curve is optimistic.
@@ -346,6 +348,7 @@ Round numbers are in brackets; AUC gains are at α 0.7-0.5 on T1 unless stated.
 | Processing | Re-align renders to the sheet centre or edges (1) | +2 letter boxes or better retention | KILL: every lock loses boxes |
 | Processing | Cross-scroll matched filter on depth profiles; notch along the fibres (1) | boxes ≥ 2× random on both scrolls | KILL: d′ 0.17-0.26, no boxes |
 | Processing | In-plane deconvolution of the renders before inference (Richardson-Lucy or Wiener at the measured PSF, σ 0.8-1.6 px; variant chosen on T1b) (31) | gain ≥ +0.03, no loss at full strength | KILL: −0.001 [−0.027, +0.028] for V3 with RL σ 1.6; +0.003 for v2; false lights 0.077 → 0.062 |
+| Model | One-class anomaly detector on the scroll's own blank papyrus (184 texture statistics, Gaussian or k-NN cover, cross-fitted by winding; statistic selected on a synthetic positive control only) (33) | AUC ≥ 0.59 at α 0.7 and ≥ 0.70 at α 1, or fusion with V3 ≥ +0.03 | KILL: AUC 0.51 at every α (Gabor energy 0.56 at α 1); fusion −0.020 [−0.062, +0.023]; false lights 0.19-0.33 against 0.075; the same detector finds +1 SD synthetic bumps at 0.998 |
 | Signal | Areal mass excess under ink (9) | AUC ≥ 0.60 on both 1447 windings | KILL: AUC 0.44-0.50 (mass bound post hoc, see Why) |
 | Signal | Lead-bearing specks on the inked face (5) | letter/random ≥ 2, or recto/verso ≥ 1.5 | KILL: 0.92 and 1.16; recto/verso 0.94-1.11 in 14 scrolls |
 | Signal | Strokes change the gap to the next winding (8) | AUC ≥ 0.58 or ≤ 0.42, same sign on 343 | KILL: 0.552; opposite sign on 343 |
@@ -388,6 +391,7 @@ In order of how directly our data support them:
 
 What our tests argue against, at 8.64-9.362 µm:
 - more dose, a denoiser, or a deconvolution at the measured PSF;
+- a one-class detector of the scroll's own papyrus texture (round 33): ink moves the local texture statistics less than blank papyrus varies from window to window;
 - fine-tuning on small label sets for pixel AUC;
 - layout statistics (columns, class averages) on ink maps: the maps' clutter spectrum falls as f^−4, so at fixed per-pixel contrast a statistic over a letter, a line or a column has one to two orders of magnitude less d′ than one over a stroke (Burgess's size law, round 29).
 
@@ -418,7 +422,7 @@ Thirteen errors or weak points changed what we could claim or how we state it. E
 - **Injected ink only:** all readability results use injected ink; the blend cannot separate weaker ink from texture interference.
 - **Visual candidates:** decisions on search maps are visual, and the rule was not calibrated by blind injection.
 - **Small searched area:** the searches cover a small fraction of each roll.
-- **Model limits:** the ideal-observer benchmark is linear (Hotelling up to 21 px); a non-linear ideal observer is not computable here, so headroom is bounded only from the linear side. The limit may move with better networks (it spreads 0.74-0.94 across public ones).
+- **Model limits:** the ideal-observer benchmark is linear (Hotelling up to 21 px); a non-linear ideal observer is not computable here, so headroom is bounded only from the linear side; a hand-crafted one-class texture detector (round 33) is at chance too, which closes the window-statistics side but not deep one-class features, which were not run. The limit may move with better networks (it spreads 0.74-0.94 across public ones).
 - **Unnormalised contrast:** α is relative to 1447's grey levels. It is not an attenuation or ink-load unit.
 - **Analysis choices:** the crop window alone moves group gaps by about ±0.02 AUC, and the voxel grid by up to 0.06.
 - **Letter-source texture:** the letter crops come from the official renderers (Nader's 1447 surfaces, the organisers' 0841 surface volumes), whose fine-scale spectra are steeper (β about 4.0-4.1 over 25-250 µm) than our renders of the eligible scrolls (2.5-3.7). An injected letter therefore carries a smoother fine texture into a rougher background; round 21 matched the sheet-edge width, not the spectrum. The verdicts compare backgrounds under the same letters, so this shifts absolute AUCs rather than comparisons.
