@@ -29,6 +29,9 @@ def make(R, lab, cert, B, alphas, pos=None, bg_surface=33, max_shift=4):
     sc_src = int(round((Ls - 1) / 2 + 0.01))                            # 12 for 24 layers, 14 for 28
     off = int(round(bg_surface - 0.5 - (Ls - 1) / 2))                   # 21 for 24 layers, 19 for 28
     A = (R[sc_src] > 0) & cert
+    if B.shape[1] < H or B.shape[2] < W:
+        print(f'background {B.shape[1:]} is smaller than the crop {(H, W)}: use a narrower crop (readability.crops --height/--width)', flush=True)
+        return None
     yb, xb = window_from_masks(B, A, bg_surface) if pos is None else pos
     Bw = B[:, yb:yb + H, xb:xb + W]
     J = (R[sc_src] > 0) & (Bw[bg_surface] > 0)

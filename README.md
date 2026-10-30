@@ -90,7 +90,7 @@ Expected output (our run):
 w00_41.zarr    valid 83.2%    near 33.4%    depth contrast median 59.6 (share >= 25: 95%)    papyrus checked 14,249,441 px
 ```
 
-`w00_41.zarr.sheets.png` is the quarter-size map shown above; `w00_41.zarr.sheets_mask.png` holds the class per pixel (0-4) at full resolution, aligned to the render, for other tools.
+`w00_41.zarr.sheets.png` is the quarter-size map shown above; `w00_41.zarr.sheets_mask.png` holds the class per pixel at full resolution (4220 × 4760 here), aligned to the render, for other tools: on w00, 29% no data, 20% valid sheet centred within ±2 layers, 39% valid sheet further from the mesh, 12% papyrus without a distinct sheet.
 
 **How to read it.** Below about 50% valid, or a depth contrast median under 25 grey levels, do not trust a search or a readability measurement on that render: in our data such renders came from fused or packed sheets (PHerc. 0268: 14%, contrast 16-18). The "near" share describes where the mesh sits inside the sheet, not quality.
 
@@ -102,19 +102,29 @@ python -m readability.clutter w00_41.zarr --surface 20 --side above
 python -m readability.texture w00_41.zarr --surface 20 --voxel 9.366
 ```
 
-On our 66-layer renders (mesh at layer 33, ink on the lower-index side) the defaults apply. In our data a clutter index of 0.10 against 0.15 corresponds to about 0.10 AUC at α 0.85 for 1447-type ink.
+Expected output on w00 (our run): clutter index 0.0951 below and 0.0958 above the mesh; texture `F interior 0.284, F edge 0.137, edge width 2.25 layers = 21 um, fringe 0.110`. On our 66-layer renders (mesh at layer 33, ink on the lower-index side) the defaults apply. In our data a clutter index of 0.10 against 0.15 corresponds to about 0.10 AUC at α 0.85 for 1447-type ink.
 
-**Readability bench.** Needs letter crops (built locally from a labelled dataset, below), background renders whose mesh layer is known, and an ink_9um-format checkpoint. `configs/example_bench.json` shows the keys; set `"background_surface": 20` for `readability.tifxyz` bands (default 33 for our 66-layer renders). The example config points at our own renders, which are not distributed; replace them with your bands.
+**Readability bench on official segments.** Needs letter crops (built locally from a labelled dataset, below), background renders whose mesh layer is known, and an ink_9um-format checkpoint. `configs/example_bench_tifxyz.json` runs a PHerc. 0841 letter crop (1800 px wide, so that it fits the small auto-grown segments) over three official PHerc. 800 bands rendered with `readability.tifxyz` (`"background_surface": 20`); `configs/example_bench.json` is the same for our 66-layer renders (default 33), which are not distributed.
 
 ```bash
-python -m readability.bench configs/example_bench.json out.json
+python -m readability.bench configs/example_bench_tifxyz.json out.json
 ```
+
+Expected output (our run, Reader V3, 18 s on the GB10):
+
+```
+800_seg4 1.0:0.899 0.85:0.826 0.7:0.783 clutter 0.1144
+800_seg5 1.0:0.899 0.85:0.796 0.7:0.717 clutter 0.0875
+800_seg1 1.0:0.899 0.85:0.754 0.7:0.714 clutter 0.1126
+```
+
+The 9.366 µm letters sit on 8.64 µm backgrounds here (an 8% voxel mismatch, see the report's round 26), and three segments with one crop are an example of the mechanics, not a measurement; the Spearman line over three points means nothing. A background smaller than the crop is skipped with a message; cut a narrower crop with `readability.crops ... --width`.
 
 ```bash
 python -m readability.crops official PHerc0841/segments/20260220213127-w00/surface-volumes/9.366um-1.2m-113keV-volume-20250821151531.zarr PHerc0841/segments/20260220213127-w00/ink-labels/2.403um-volume-20260319124803/20260918 reader-v2-step040000.pth crops/0841_w00.npz
 ```
 
-The bench on tifxyz bands (`background_surface` other than 33) was added after the measurements in the report, which all used our 66-layer renders; it is tested on synthetic data and documented here so that others can run it on official segments.
+The bench on tifxyz bands (`background_surface` other than 33) was added after the measurements in the report, which all used our 66-layer renders; the example above is its first run on official segments.
 
 ## Results
 
